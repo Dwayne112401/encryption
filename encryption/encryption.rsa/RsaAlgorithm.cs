@@ -230,13 +230,13 @@ namespace encryption.rsa
 
         #endregion
 
-        #region 签名
+        #region 签名与验签
         /// <summary>
         ///  RSA 签名
         /// https://docs.microsoft.com/zh-tw/dotnet/api/system.security.cryptography.rsacryptoserviceprovider.signdata?view=net-5.0
         /// </summary>
-        /// <param name="hash"></param>
-        /// <param name="str"></param>
+        /// <param name="hash">报文摘要算法</param>
+        /// <param name="str">报文数据</param>
         /// <returns></returns>
         public string Sign(string hash, string str)
         {
@@ -248,8 +248,8 @@ namespace encryption.rsa
         /// <summary>
         /// 签名
         /// </summary>
-        /// <param name="hash"></param>
-        /// <param name="data"></param>
+        /// <param name="hash">报文摘要算法</param>
+        /// <param name="data">报文数据</param>
         /// <returns></returns>
         public string Sign(string hash, byte[] data)
         {
@@ -257,6 +257,30 @@ namespace encryption.rsa
             return Convert.ToBase64String(sign);
         }
 
+        /// <summary>
+        /// 验签
+        /// </summary>
+        /// <param name="data">报文数据</param>
+        /// <param name="hash">报文摘要算法</param>
+        /// <param name="sign">签名</param>
+        /// <returns></returns>
+        public bool VerifySign(byte[] data, string hash,string sign)
+        {
+            byte[] signBytes = Convert.FromBase64String(sign);
+            return _rsa.VerifyData(data, hash, signBytes);
+        }
+
+        /// <summary>
+        /// 验签
+        /// </summary>
+        /// <param name="data">报文数据</param>
+        /// <param name="hash">报文摘要算法</param>
+        /// <param name="sign">签名</param>
+        /// <returns></returns>
+        public bool VerifySign(string data, string hash, string sign)
+        {
+            return VerifySign(Encoding.GetBytes(data),hash,sign);
+        }
         #endregion
     }
 }

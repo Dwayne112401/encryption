@@ -11,16 +11,22 @@ namespace encryption.rsa
         static void Main(string[] args)
         {
             {
-                Console.WriteLine("-----------------------------------------------------RSA 字符串加密与解密--------------------------------------------------");
+                Console.WriteLine("-----------------------------------------------------RSA 字符串加密与解密以及签名与验签--------------------------------------------------");
                 var input = "公钥密码体制中，目前最著名的是由美国三位科学家Rivest, Shamir 和 Adleman 于1976年提出，并在1978年正式发表的RSA 算法。";
                 Console.Write($"加密内容：{input}\r\n");
                 var rsa = new RsaAlgorithm();
-                Console.WriteLine($"RSA公钥：\r\n{rsa.PublicKey}\r\n");
+
                 Console.WriteLine($"RSA私钥：\r\n{rsa.PrivateKey}\r\n");
                 var encrypt = rsa.Encrypt(input);
                 Console.WriteLine($"RSA加密后内容：\r\n{encrypt}\r\n");
-                Console.WriteLine($"RSA解密后内容：\r\n{rsa.Decrypt(encrypt)}\r\n");
-                Console.WriteLine($"RSA签名[SHAI]：\r\n{rsa.Sign("SHA1", input)}\r\n");
+                var sign = rsa.Sign("SHA1", input);
+                Console.WriteLine($"RSA生成数字签名[SHAI]：\r\n{sign}\r\n");
+
+                Console.WriteLine($"RSA公钥：\r\n{rsa.PublicKey}\r\n");
+                var decrypt = rsa.Decrypt(encrypt);
+                Console.WriteLine($"RSA解密后内容：\r\n{decrypt}\r\n");
+                string signResult = rsa.VerifySign(decrypt, "SHA1", sign) ? "验签通过" : "验签未通过";
+                Console.WriteLine($"RSA进行鉴别数字签名：{signResult}");
             }
 
             {
@@ -28,13 +34,14 @@ namespace encryption.rsa
                 var input = System.IO.File.ReadAllBytes(@"C:\Users\97460\Desktop\1.rar");
                 Console.Write($"加密内容：{Convert.ToBase64String(input)}\r\n");
                 var rsa = new RsaAlgorithm(1024);
-                Console.WriteLine($"RSA公钥：\r\n{rsa.PublicKey}\r\n");
+
                 Console.WriteLine($"RSA私钥：\r\n{rsa.PrivateKey}\r\n");
                 var encrypt = rsa.Encrypt(input);
                 Console.WriteLine($"RSA加密后内容：\r\n{Convert.ToBase64String(encrypt)}\r\n");
+
+                Console.WriteLine($"RSA公钥：\r\n{rsa.PublicKey}\r\n");
                 var decrypt = rsa.Decrypt(encrypt);
                 Console.WriteLine($"RSA解密后内容：\r\n{Convert.ToBase64String(decrypt)}\r\n");
-                Console.WriteLine($"RSA签名[SHAI]：\r\n{rsa.Sign("SHA1", input)}\r\n");
                 System.IO.File.WriteAllBytes("1.rar", decrypt);
             }
 
@@ -44,9 +51,8 @@ namespace encryption.rsa
                 Console.Write($"加密内容：{input}\r\n");
 
                 // 证书加密
-                var rsaEncrypt = new RsaAlgorithm(1024);
+                var rsaEncrypt = new RsaAlgorithm();
                 rsaEncrypt.X509CertCreateEncryptRSA(@"RSAKey.cer");
-                Console.WriteLine($"RSA公钥：\r\n{rsaEncrypt.PublicKey}\r\n");
                 Console.WriteLine($"RSA私钥：\r\n{rsaEncrypt.PrivateKey}\r\n");
                 var encrypt = rsaEncrypt.Encrypt(input);
                 Console.WriteLine($"RSA加密后内容：\r\n{encrypt}\r\n");
@@ -54,9 +60,9 @@ namespace encryption.rsa
                 // 证书解密
                 var rsaDecrypt = new RsaAlgorithm(1024);
                 rsaDecrypt.X509CertCreateDecryptRSA(@"RSAKey.pfx", "888888");
+                Console.WriteLine($"RSA公钥：\r\n{rsaEncrypt.PublicKey}\r\n");
                 var decrypt = rsaDecrypt.Decrypt(encrypt);
                 Console.WriteLine($"RSA解密后内容：\r\n{decrypt}\r\n");
-                Console.WriteLine($"RSA签名[SHAI]：\r\n{rsaDecrypt.Sign("SHA1", input)}\r\n");
             }
             Console.ReadKey();
         }

@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "test", "test\test.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "encryption.md5", "encryption.md5\encryption.md5.csproj", "{23A77E8E-DC70-48B1-8D13-AC9C921C6FDF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "encryption.authenticator", "encryption.authenticator\encryption.authenticator.csproj", "{290BF141-05C5-44B2-AAAA-67298D3362B8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{23A77E8E-DC70-48B1-8D13-AC9C921C6FDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{23A77E8E-DC70-48B1-8D13-AC9C921C6FDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{23A77E8E-DC70-48B1-8D13-AC9C921C6FDF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{290BF141-05C5-44B2-AAAA-67298D3362B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{290BF141-05C5-44B2-AAAA-67298D3362B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{290BF141-05C5-44B2-AAAA-67298D3362B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{290BF141-05C5-44B2-AAAA-67298D3362B8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

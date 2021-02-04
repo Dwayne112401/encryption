@@ -51,7 +51,7 @@ namespace encryption.des
             }
             catch (Exception e)
             {
-                throw new Exception($"The length of password is Wrong:{e.Message}",e);
+                throw new Exception($"The length of password is Wrong:{e.Message}", e);
             }
         }
 

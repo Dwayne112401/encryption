@@ -14,21 +14,39 @@ namespace encryption.des
     public class DesAlgorithm
     {
         public Encoding Encoding { get; set; }
+
         public PaddingMode Padding { get; set; }
         public CipherMode Mode { get; set; }
         public string PassWord { get; private set; }
+        public string IV { get; private set; }
         private DESCryptoServiceProvider _des;
 
         #region .ctor
 
-        public DesAlgorithm()
+        public DesAlgorithm(string password = null)
         {
-            _des = new DESCryptoServiceProvider();
-            PassWord = Convert.ToBase64String(_des.Key);
             Encoding = Encoding.UTF8;
             Padding = PaddingMode.PKCS7;
             Mode = CipherMode.CBC;
+
+            if (string.IsNullOrEmpty(password))
+            {
+                _des = new DESCryptoServiceProvider();
+                PassWord = Convert.ToBase64String(_des.Key);
+                IV = Convert.ToBase64String(_des.IV);
+            }
+            else
+            {
+                byte[] buffer = Encoding.GetBytes(password).Skip(0).Take(8).ToArray();
+                _des = new DESCryptoServiceProvider()
+                {
+                    Key = buffer,
+                    IV = buffer,
+                };
+                PassWord = IV = password;
+            }
         }
+
         #endregion
 
 
@@ -37,17 +55,30 @@ namespace encryption.des
         /// </summary>
         /// <param name="password">密码</param>
         /// <returns></returns>
-        public DESCryptoServiceProvider CreateNewkey(string password)
+        public DESCryptoServiceProvider CreateDes(string password, string iv = null)
         {
             try
             {
-                byte[] buffer = Encoding.GetBytes(password).Skip(0).Take(8).ToArray();
-                _des = new DESCryptoServiceProvider()
+                if (string.IsNullOrEmpty(iv) == false)
                 {
-                    Key = buffer,
-                    IV=buffer,
-                };
-                PassWord = password;
+                    _des = new DESCryptoServiceProvider()
+                    {
+                        Key = Convert.FromBase64String(password),
+                        IV = Convert.FromBase64String(iv),
+                    };
+                    PassWord = Convert.ToBase64String(_des.Key);
+                    IV = Convert.ToBase64String(_des.IV);
+                }
+                else
+                {
+                    _des = new DESCryptoServiceProvider()
+                    {
+                        Key = Encoding.GetBytes(password).Skip(0).Take(8).ToArray(),
+                        IV = Encoding.GetBytes(password).Skip(0).Take(8).ToArray(),
+                    };
+                    PassWord = IV = password;
+                }
+
                 return _des;
             }
             catch (Exception e)
@@ -81,6 +112,7 @@ namespace encryption.des
                 {
                     cs.Write(pToEncrypt, 0, pToEncrypt.Length);
                     cs.FlushFinalBlock();
+                    cs.Close();
                 }
                 base64 = ms.ToArray();
             }
@@ -92,7 +124,7 @@ namespace encryption.des
         /// </summary>
         /// <param name="pToDecrypt">需要解密的字符串</param>
         /// <returns></returns>
-        public  string Decrypt(string pToDecrypt)
+        public string Decrypt(string pToDecrypt)
         {
             byte[] inputByteArray = Convert.FromBase64String(pToDecrypt);
             return Encoding.GetString(this.Decrypt(inputByteArray));
@@ -112,6 +144,7 @@ namespace encryption.des
                 {
                     cs.Write(pToDecrypt, 0, pToDecrypt.Length);
                     cs.FlushFinalBlock();
+                    cs.Close();
                 }
                 data = ms.ToArray();
             }
